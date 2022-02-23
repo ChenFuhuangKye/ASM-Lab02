@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.30.30706.0	    02/16/22 09:47:17
+Microsoft (R) Macro Assembler Version 14.30.30706.0	    01/20/22 00:07:56
 AddSub.asm						     Page 1 - 1
 
 
@@ -32,32 +32,30 @@ c:\Irvine\SmallWin.inc(11) : warning A4011:multiple .MODEL directives found : .M
 			      C 
 
  00000000			.data 
-
-
-
+ 00000000 00000001		val1 DWORD 1
+ 00000004 00000002		val2 DWORD 2
+ 00000008 00000004		val3 DWORD 4
+ 0000000C 00000008		sum  DWORD 8
 
  00000000			.code
- 00000000			main proc ;
-					
- 00000000  B8 00000019			mov eax,25
- 00000005  40				inc eax
- 00000006  F7 D8			neg eax
- 00000008  BB 0000001E			mov ebx,30
- 0000000D  83 C3 11			add ebx,17
- 00000010  03 C3			add eax,ebx
- 00000012  BB 0000007B			mov ebx,123
- 00000017  F7 DB			neg ebx
- 00000019  81 C3 000000C0		add ebx,192
- 0000001F  F7 DB			neg ebx
- 00000021  03 C3			add eax,ebx
- 00000023  E8 00000000 E		call DumpRegs
-					
+ 00000000			main proc
+ 00000000  A1 00000000 R		mov		eax,val1			; start eax with  1
+ 00000005  8B 1D 00000004 R		mov		ebx,val2			; start ebx with  2
+ 0000000B  8B 0D 00000008 R		mov		ecx,val3			; start ecx with  4
+ 00000011  8B 15 0000000C R		mov		edx,sum				; start edx with  8
+
+ 00000017  2B D0			sub		edx,eax				; edx subtract eax 8-1=7
+ 00000019  2B D3			sub		edx,ebx				; edx subtract eax 7-2=5
+ 0000001B  2B D1			sub		edx,ecx				; edx subtract eax 5-4=1
+
+ 0000001D  E8 00000000 E		call	DumpRegs			; display the registers
+
 					invoke ExitProcess,0
- 00000028  6A 00	   *	    push   +000000000h
- 0000002A  E8 00000000 E   *	    call   ExitProcess
- 0000002F			main endp
+ 00000022  6A 00	   *	    push   +000000000h
+ 00000024  E8 00000000 E   *	    call   ExitProcess
+ 00000029			main endp
 				end main
-Microsoft (R) Macro Assembler Version 14.30.30706.0	    02/16/22 09:47:17
+Microsoft (R) Macro Assembler Version 14.30.30706.0	    01/20/22 00:07:56
 AddSub.asm						     Symbols 2 - 1
 
 
@@ -151,8 +149,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000002F DWord	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000010 DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000029 DWord	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -259,7 +257,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000002F Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000029 Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -493,6 +491,10 @@ lightMagenta . . . . . . . . . .	Number	 0000000Dh
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
+sum  . . . . . . . . . . . . . .	DWord	 0000000C _DATA	
+val1 . . . . . . . . . . . . . .	DWord	 00000000 _DATA	
+val2 . . . . . . . . . . . . . .	DWord	 00000004 _DATA	
+val3 . . . . . . . . . . . . . .	DWord	 00000008 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   

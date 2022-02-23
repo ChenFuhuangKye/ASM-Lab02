@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.30.30706.0	    01/23/22 22:18:28
+Microsoft (R) Macro Assembler Version 14.30.30706.0	    02/23/22 09:18:48
 AddSub.asm						     Page 1 - 1
 
 
@@ -32,24 +32,47 @@ c:\Irvine\SmallWin.inc(11) : warning A4011:multiple .MODEL directives found : .M
 			      C 
 
  00000000			.data 
- 00000000 0000000A		val1 DWORD 10
+ 00000000  00000032 [		  FIBNum    DWORD 50 DUP(?)
+	    00000000
+	   ]
+ 000000C8 00000000		  vla       DWORD ?
+
 
  00000000			.code
- 00000000			main proc
- 00000000  A1 00000000 R		mov		eax,val1			; start eax with  10
+ 00000000			main proc ;
+				  ;Set FIBNum number  F(0) = 1,  F(1) = 1                          
+ 00000000  C7 05 00000000 R		mov [ FIBNum ] ,1                                        ;  F(0) = 1
+	   00000001
+ 0000000A  C7 05 00000004 R		mov [ FIBNum +4] ,1                                      ;  F(1) = 1
+	   00000001
+				  
+				  ;print f(0), f(1)
+ 00000014  B8 00000001			mov eax, 1
+ 00000019  E8 00000000 E		call WriteDec
+ 0000001E  E8 00000000 E		call Crlf
+ 00000023  E8 00000000 E		call WriteDec
+ 00000028  E8 00000000 E		call Crlf
+					
+				  ;
+ 0000002D  BE 00000000 R		mov  esi, OFFSET FIBNum
+ 00000032  B9 0000001C			mov ecx, 28                                              ; print FIBNum to  f(30)
+ 00000037			L1:
+ 00000037  8B 06			mov eax, [ esi ];
+ 00000039  03 46 04			add eax, [ esi + 4];
+ 0000003C  89 46 08			mov [ esi + 8 ], eax;
+				  
+ 0000003F  E8 00000000 E		call WriteDec                                           ;print int 
+ 00000044  E8 00000000 E		call Crlf											   ;chang line
+ 00000049  83 C6 04			add esi,4
 
- 00000005  83 E8 01			sub		eax,1				; subtract 1
- 00000008  83 E8 02			sub		eax,2				; subtract 2
- 0000000B  83 E8 04			sub		eax,4				; subtract 4
-
- 0000000E  E8 00000000 E		call	DumpRegs			; display the registers
-
+ 0000004C  E2 E9			loop L1
+				  
 					invoke ExitProcess,0
- 00000013  6A 00	   *	    push   +000000000h
- 00000015  E8 00000000 E   *	    call   ExitProcess
- 0000001A			main endp
+ 0000004E  6A 00	   *	    push   +000000000h
+ 00000050  E8 00000000 E   *	    call   ExitProcess
+ 00000055			main endp
 				end main
-Microsoft (R) Macro Assembler Version 14.30.30706.0	    01/23/22 22:18:28
+Microsoft (R) Macro Assembler Version 14.30.30706.0	    02/23/22 09:18:48
 AddSub.asm						     Symbols 2 - 1
 
 
@@ -143,8 +166,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 DWord	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000004 DWord	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000001A DWord	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 000000CC DWord	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000055 DWord	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -251,7 +274,8 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000001A Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000055 Public STDCALL
+  L1 . . . . . . . . . . . . . .	L Near	 00000037 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -286,6 +310,7 @@ ENABLE_WINDOW_INPUT  . . . . . .	Number	 00000008h
 ENABLE_WRAP_AT_EOL_OUTPUT  . . .	Number	 00000002h   
 ENHANCED_KEY . . . . . . . . . .	Number	 00000100h   
 FALSE  . . . . . . . . . . . . .	Number	 00000000h   
+FIBNum . . . . . . . . . . . . .	DWord	 00000000 _DATA	
 FILE_APPEND_DATA . . . . . . . .	Number	 00000004h   
 FILE_ATTRIBUTE_ARCHIVE . . . . .	Number	 00000020h   
 FILE_ATTRIBUTE_COMPRESSED  . . .	Number	 00000800h   
@@ -485,7 +510,7 @@ lightMagenta . . . . . . . . . .	Number	 0000000Dh
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-val1 . . . . . . . . . . . . . .	DWord	 00000000 _DATA	
+vla  . . . . . . . . . . . . . .	DWord	 000000C8 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
